@@ -1,0 +1,24 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+
+@*
+    This snippet displays a list of links of the pages immediately under the top-most page in the content tree.
+    This is the home page for a standard website.
+    It also highlights the current active page/section in the navigation with the css class "current".
+*@
+
+@{ var selection = CurrentPage.Site().Children.Where("Visible"); }
+
+<ul>
+    @foreach (var item in selection)
+    {
+		var isProtected = umbraco.library.IsProtected(item.id, item.path);
+		var loginAccess = umbraco.library.IsProtected(item.id, item.path) && umbraco.library.HasAccess(item.id, item.path);
+		if (!isProtected || loginAccess)
+		{
+			<li class="@(item.IsAncestorOrSelf(CurrentPage) ? "current" : null)">
+				<a href="@item.Url">@item.Name</a>
+			</li>
+		}
+    }
+</ul>
